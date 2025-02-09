@@ -1,0 +1,34 @@
+/* document-dialog.component.scss */
+
+  
+  /* La zone de contenu de la dialog occupe l'espace disponible et permet le défilement */
+  .dialog-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    max-height: 100%;
+  }
+  
+  /* Le formulaire est organisé en colonne et occupe toute la hauteur */
+  .document-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  /* Ce conteneur va permettre à la textarea de prendre l'espace restant */
+  .flex-expand {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* La textarea prend toute la hauteur du conteneur flex et son texte est en 11px */
+  .flex-expand textarea[matInput] {
+    flex: 1;
+    font-family: "Merriweather", serif;
+    overflow: auto;
+    resize: none; /* Facultatif : empêcher le redimensionnement manuel */
+  }
+  

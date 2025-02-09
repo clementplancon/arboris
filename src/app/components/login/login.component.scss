@@ -1,0 +1,59 @@
+.login-page {
+    display: flex;
+    align-items: center;       // Centrage vertical
+    justify-content: center;   // Centrage horizontal
+    height: 100vh;
+    padding: 0 20px;           // Pour éviter que le contenu touche les bords
+  }
+  
+  .left-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .right-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  
+  /* Le séparateur vertical : 1px de large, 33% de la hauteur de la viewport et dégradé */
+  .separator {
+    width: 2px;
+    height: 40vh; 
+    background: linear-gradient(#60fc8f, #0a270e);
+    margin: 0 50px;
+  }
+
+  .logo-title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Nom de l'application avec effet de texte en dégradé */
+  .app-name {
+    font-size: 4rem;
+    font-family: "Montserrat Alternates", serif;
+    font-weight: 400;
+    font-style: normal;
+    background: linear-gradient(#60fc8f, #0a270e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    margin-top: 0;
+  }
+  
+  /* Style pour le logo (adaptez la taille en fonction de vos besoins) */
+  .logo {
+    width: 150px;
+    height: auto;
+  }
+  

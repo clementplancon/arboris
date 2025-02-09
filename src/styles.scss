@@ -2,3 +2,15 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+  
+  /* Les champs s'étendent sur toute la largeur */
+  .full-width {
+    width: 100%;
+  }
+
+    /* Ovveride mat */
+  .cdk-overlay-pane, .mat-mdc-dialog-panel {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+  }

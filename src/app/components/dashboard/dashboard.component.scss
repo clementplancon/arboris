@@ -1,0 +1,139 @@
+/* Global dashboard container */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Header */
+.dashboard-header {
+  background-color: #fff;
+  padding: 10px 20px;
+  border-bottom: 1px solid #191654;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 50px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.app-name {
+  font-size: 2rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #43C6AC, #191654);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Montserrat Alternates", serif;
+  font-weight: 400;
+  font-style: normal;
+  margin: 0;
+}
+
+/* Main area divided en trois colonnes */
+.dashboard-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Colonne de gauche : Arborescence */
+.sidebar-left {
+  width: min-content;
+  border-right: 1px solid #191654;
+  overflow-y: auto;
+  padding: 10px;
+  height: 100%;
+}
+
+/* Colonne centrale : Zone d'édition */
+.content-center {
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.editor-placeholder {
+  border: 1px dashed #999;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Colonne de droite : Post-it */
+.sidebar-right {
+  width: min-content;
+  border-left: 1px solid #191654;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.postit-placeholder {
+  border: 1px dashed #999;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.tree-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+  min-height: 30px;
+  padding: 10px;
+  padding-left: 20px;
+  margin-left: 5px;
+}
+li {
+  margin: 4px 0;
+}
+.node-content {
+  display: flex;
+  align-items: center;
+  margin-left: -37px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.node-content button {
+  margin-left: 4px;
+}
+
+/* Animation pour afficher/masquer les enfants */
+@keyframes slideIn {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: auto;
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    height: auto;
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}

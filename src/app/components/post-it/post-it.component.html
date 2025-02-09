@@ -1,0 +1,31 @@
+<div class="postit-container">
+    <div class="postit-header">
+      <button mat-raised-button color="primary" (click)="addPostIt()">
+        Ajouter un post-it
+      </button>
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>Filtrer les post-it</mat-label>
+        <input matInput [formControl]="filterControl" placeholder="Recherche...">
+      </mat-form-field>
+    </div>
+    <mat-accordion multi style="flex: 1; padding: 10px;">
+      <mat-expansion-panel *ngFor="let post of filteredPostIts">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span style="white-space: nowrap;">{{ post.title }}</span>
+          </mat-panel-title>
+          <mat-panel-description>
+            <button mat-icon-button (click)="editPostIt(post); $event.stopPropagation()" matTooltip="Modifier">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="deletePostIt(post); $event.stopPropagation()" matTooltip="Supprimer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="postit-content">
+          {{ post.text }}
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>

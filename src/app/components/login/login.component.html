@@ -1,0 +1,30 @@
+<div class="login-page">
+    <!-- Partie gauche : logo et nom de l'application -->
+    <div class="left-section">
+        <div class="logo-title">
+            <img src="/assets/logo.png" alt="Logo de l'application" class="logo" />
+            <h1 class="app-name">Arboris</h1>
+        </div>
+    </div>
+  
+    <!-- Séparateur vertical -->
+    <div class="separator"></div>
+  
+    <!-- Partie droite : card de connexion -->
+    <div class="right-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Connexion</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Veuillez vous connecter avec votre compte Google autorisé.</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="login()">
+            Se connecter avec Google
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+  

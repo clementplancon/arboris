@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Ajouter un dossier</h1>
+<div mat-dialog-content>
+  <form [formGroup]="folderForm" style="display: flex; flex-direction: column;">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Nom du dossier</mat-label>
+      <input matInput formControlName="label" required>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Couleur</mat-label>
+      <input matInput type="color" formControlName="color" required>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button mat-button color="primary" [disabled]="folderForm.invalid" (click)="onSubmit()">Ajouter</button>
+</div>

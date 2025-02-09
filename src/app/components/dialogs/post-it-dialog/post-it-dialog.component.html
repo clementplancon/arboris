@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>{{ data.title ? 'Modifier le Post-it' : 'Ajouter un Post-it' }}</h1>
+<div mat-dialog-content class="dialog-content">
+  <form [formGroup]="postItForm" class="postit-form">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Titre</mat-label>
+      <input matInput formControlName="title" required>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width flex-expand">
+      <mat-label>Texte</mat-label>
+      <textarea matInput formControlName="text" required cdkTextareaAutosize></textarea>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button mat-button color="primary" [disabled]="postItForm.invalid" (click)="onSubmit()">Enregistrer</button>
+</div>

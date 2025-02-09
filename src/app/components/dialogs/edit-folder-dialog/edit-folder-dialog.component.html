@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Modifier le dossier</h1>
+<div mat-dialog-content>
+  <form [formGroup]="editForm" style="display: flex; flex-direction: column;">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="label">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Couleur</mat-label>
+      <input matInput type="color" formControlName="color">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Ordre</mat-label>
+      <input matInput type="number" formControlName="order" min="1" step="1">
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button mat-button color="primary" (click)="onSave()" [disabled]="editForm.invalid">Enregistrer</button>
+</div>
