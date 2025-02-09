@@ -11,7 +11,8 @@
   <div class="dashboard-main">
     <!-- Colonne de gauche : Arborescence -->
     <aside class="sidebar-left">
-      <button mat-raised-button color="primary" (click)="addFolder(null)">Ajouter un dossier racine</button>
+      <button mat-raised-button color="primary" (click)="addFolder(null)">
+        <mat-icon [style.color]="'#ffbe7b'">folder</mat-icon><span style="margin-left: 10px;">Ajouter un dossier racine</span></button>
       <!-- Champ de filtre -->
       <mat-form-field appearance="fill" class="filter-field full-width" style="margin-top: 10px;;">
         <mat-label>Filtrer</mat-label>

@@ -1,7 +1,7 @@
 <div class="postit-container">
     <div class="postit-header">
       <button mat-raised-button color="primary" (click)="addPostIt()" style="align-self: flex-end;">
-        Ajouter un post-it
+        <mat-icon [style.color]="'#ffbe7b'">note_stack</mat-icon><span style="margin-left: 10px;">Ajouter un post-it</span>
       </button>
       <mat-form-field appearance="fill" class="filter-field full-width">
         <mat-label>Filtrer les post-it</mat-label>
