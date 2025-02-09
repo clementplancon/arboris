@@ -12,15 +12,18 @@
     <!-- Colonne de gauche : Arborescence -->
     <aside class="sidebar-left">
       <button mat-raised-button color="primary" (click)="addFolder(null)">Ajouter un dossier racine</button>
+      <!-- Champ de filtre -->
+      <mat-form-field appearance="fill" class="filter-field full-width" style="margin-top: 10px;;">
+        <mat-label>Filtrer</mat-label>
+        <input matInput [(ngModel)]="filterText" (ngModelChange)="applyFilter()" placeholder="Rechercher...">
+      </mat-form-field>
       <!-- Vous pouvez conserver votre template récursif ici -->
-      <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: treeData, parent: null }"></ng-container>
+      <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: filteredTreeData, parent: null }"></ng-container>
     </aside>
 
     <!-- Colonne centrale : Zone d'édition -->
     <main class="content-center">
-      <div class="editor-placeholder">
-        <p>Zone d'édition de document (type Word / Google Docs)</p>
-      </div>
+      <app-editor #editor></app-editor>
     </main>
 
     <!-- Colonne de droite : Post-it -->
@@ -31,42 +34,45 @@
 </div>
 
 <ng-template #recursiveList let-nodes let-parent="parent">
-  <ul [id]="getDropListId(parent)" [style]="{ 'border-left': parent !== null ? '2px dashed #bbb' : 'none' }"
-  class="tree-list">
+  <ul class="tree-list" [style.padding-left]="parent ? null : 0">
     <li *ngFor="let node of nodes">
-      <div class="node-content" [style.padding-left.px]="20" [style]="{'margin-left': node.type==='document' ? '7px' : null}">
-        <!-- Bouton de basculement toujours présent pour les folders -->
-        <button *ngIf="node.type==='folder'" 
-                mat-icon-button 
-                (click)="toggleExpand(node); $event.stopPropagation()"
-                [disabled]="!node.children || node.children.length === 0"
-                matTooltip="Afficher/Masquer">
-          <mat-icon>{{ node.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-        </button>
-        <mat-icon *ngIf="node.type==='folder'">folder</mat-icon>
-        <mat-icon *ngIf="node.type==='document'">description</mat-icon>
-        <span [style.color]="node.color" style="margin-left: 5px; cursor: pointer;" (click)="node.type==='folder' ? openEditFolderDialog(node) : openEditDocumentDialog(node)" matTooltip="Modifier">{{ node.label }}</span>
-        <!-- Boutons pour folder uniquement -->
-        <ng-container *ngIf="node.type==='folder'">
-          <button mat-icon-button (click)="addFolder(node)" matTooltip="Ajouter sous-dossier">
-            <mat-icon>create_new_folder</mat-icon>
+      <div class="node-content">
+        <div class="node-label" style="display: flex; align-items: center;">
+          <mat-icon  *ngIf="node.type==='folder'" [style.opacity]="!node.children || node.children.length === 0 ? '0.5' : '1'">{{ node.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+          <mat-icon *ngIf="node.type==='document'" [style.color]="'#65a360'">description</mat-icon>
+          <span [style.color]="node.color"
+          style="margin-left: 5px; cursor: pointer; white-space: nowrap;"
+          (click)="(!node.children || node.children.length === 0) ? null : toggleExpand(node); $event.stopPropagation()"
+          (dblclick)="node.type==='folder' ? openEditFolderDialog(node) : openEditDocumentDialog(node); $event.stopPropagation()"
+          matTooltip="Déplier / Modifier (double clic)">{{ node.label }}</span>
+        </div>
+        <div class="node-actions" style="display: flex; align-items: center;">
+          <!-- Boutons pour folder uniquement -->
+          <ng-container *ngIf="node.type==='folder'">
+            <button mat-icon-button (click)="addFolder(node)" matTooltip="Ajouter sous-dossier">
+              <mat-icon [style.color]="'#ffbe7b'">create_new_folder</mat-icon>
+            </button>
+            <button mat-icon-button (click)="addDocument(node)" matTooltip="Ajouter document">
+              <mat-icon [style.color]="'#A8CAA5'">note_add</mat-icon>
+            </button>
+          </ng-container>
+          <!-- Bouton pour insérer le document dans l'éditeur (pour documents uniquement) -->
+          <button *ngIf="node.type==='document'" mat-icon-button (click)="addDocumentToEditor(node)" matTooltip="Ajouter dans l'éditeur">
+            <mat-icon [style.color]="'#b581cc'">input</mat-icon>
           </button>
-          <button mat-icon-button (click)="addDocument(node)" matTooltip="Ajouter document">
-            <mat-icon>note_add</mat-icon>
+          <!-- Bouton pour tous types -->
+          <button mat-icon-button (click)="openMoveDialog(node)" matTooltip="Déplacer">
+            <mat-icon [style.color]="'#92ccd4'">drive_file_move</mat-icon>
           </button>
-        </ng-container>
-        <!-- Bouton pour tous types -->
-        <button mat-icon-button (click)="openMoveDialog(node)" matTooltip="Déplacer">
-          <mat-icon>drive_file_move</mat-icon>
-        </button>
-        <button mat-icon-button (click)="deleteElement(node)" matTooltip="Supprimer">
-          <mat-icon>delete</mat-icon>
-        </button>
+          <button mat-icon-button (click)="deleteElement(node)" matTooltip="Supprimer">
+            <mat-icon [style.color]="'#E97272'">delete</mat-icon>
+          </button>
+        </div>
       </div>
       <!-- Rendu récursif pour les folders -->
-          <ng-container *ngIf="node.type==='folder' && node.children && node.children.length && node.expanded" [@toggleChildren]>
-            <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: node.children, parent: node }"></ng-container>
-          </ng-container>
+      <div *ngIf="node.type==='folder' && node.children && node.children.length && node.expanded" [@toggleChildren]>
+        <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: node.children, parent: node }"></ng-container>
+      </div>
     </li>
   </ul>
 </ng-template>

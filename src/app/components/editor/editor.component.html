@@ -1,0 +1,8 @@
+
+    <quill-editor
+      #quillEditor
+      [(ngModel)]="editorData"
+      [modules]="modules"
+      (onContentChanged)="onContentChanged($event)"
+      style="height: calc(100% - 45px); width: 100%;">
+    </quill-editor>

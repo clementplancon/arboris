@@ -28,6 +28,7 @@
   .flex-expand textarea[matInput] {
     flex: 1;
     font-family: "Merriweather", serif;
+    font-size: 13px;
     overflow: auto;
     resize: none; /* Facultatif : empêcher le redimensionnement manuel */
   }

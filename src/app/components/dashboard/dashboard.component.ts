@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { trigger, transition, style, animate } from '@angular/animations';
-
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import { FirestoreService, TreeNode } from '../../services/firestore.service';
 import { FolderDialogComponent } from '../dialogs/folder-dialog/folder-dialog.component';
 import { DocumentDialogComponent } from '../dialogs/document-dialog/document-dialog.component';
@@ -13,6 +13,10 @@ import { EditFolderDialogComponent } from '../dialogs/edit-folder-dialog/edit-fo
 import { MoveNodeDialogComponent } from '../dialogs/move-node-dialog/move-node-dialog.component';
 import { PostItComponent } from '../post-it/post-it.component';
 import { EditDocumentDialogComponent } from '../dialogs/edit-document-dialog/edit-document-dialog.component';
+import { EditorComponent } from '../editor/editor.component';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 export interface DisplayTreeNode extends TreeNode {
   children: DisplayTreeNode[];  // Toujours défini (au moins un tableau vide)
@@ -36,12 +40,20 @@ export interface DisplayTreeNode extends TreeNode {
       ])
     ])
   ],
-  imports: [CommonModule, MatIconModule, MatButtonModule, PostItComponent]
+  imports: [CommonModule, MatIconModule, MatButtonModule, PostItComponent, DragDropModule, EditorComponent, FormsModule,
+      MatFormFieldModule,
+      MatInputModule,]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   treeData: DisplayTreeNode[] = [];
+  filteredTreeData: DisplayTreeNode[] = [];
+
+  filterText: string = '';
   private subscription: Subscription = new Subscription();
   private expansionState: { [id: string]: boolean } = {};
+
+  // Récupérer la référence à l'éditeur via le template
+  @ViewChild('editor') editorComponent!: EditorComponent;
 
   constructor(private firestoreService: FirestoreService, private dialog: MatDialog) { }
 
@@ -50,6 +62,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.subscription = this.firestoreService.getTree().subscribe((tree: TreeNode[]) => {
       console.log('Arbre reçu:', tree);
       this.treeData = this.transformTree(tree, 0);
+      // Initialement, aucun filtre appliqué : filteredTreeData prend toute l'arborescence
+      this.filteredTreeData = this.treeData;
     });
   }
 
@@ -62,6 +76,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Sauvegarder l'état d'expansion dans notre objet et dans le localStorage
     this.expansionState[node.id] = node.expanded;
     localStorage.setItem('folderExpansionState', JSON.stringify(this.expansionState));
+  }
+  /**
+   * Méthode de filtrage de l'arborescence.
+   * Recherche dans les labels des folders, dans le label (title) des documents et dans leurs tags.
+   */
+  applyFilter(): void {
+    const search = this.filterText.trim().toLowerCase();
+    if (!search) {
+      this.filteredTreeData = this.treeData;
+    } else {
+      this.filteredTreeData = this.filterNodes(this.treeData, search);
+    }
+  }
+
+  /**
+   * Filtre récursivement les noeuds selon le texte de recherche.
+   */
+  private filterNodes(nodes: DisplayTreeNode[], search: string): DisplayTreeNode[] {
+    const filtered = nodes.map(node => {
+      let match = false;
+      if (node.type === 'folder') {
+        match = node.label.toLowerCase().includes(search);
+      } else if (node.type === 'document') {
+        match = (node.label.toLowerCase().includes(search) ||
+                (node.tags && node.tags.some(tag => tag.toLowerCase().includes(search)))) ?? false;
+      }
+      // Filtrer les enfants récursivement, si c'est un folder
+      let filteredChildren: DisplayTreeNode[] = [];
+      if (node.type === 'folder' && node.children && node.children.length > 0) {
+        filteredChildren = this.filterNodes(node.children, search);
+      }
+      // Si le noeud lui-même correspond ou s'il a des enfants correspondants, on le conserve
+      if (match || filteredChildren.length > 0) {
+        return { ...node, children: filteredChildren };
+      }
+      return null;
+    }).filter(node => node !== null) as DisplayTreeNode[];
+    return filtered;
   }
 
   private loadExpansionState(): void {
@@ -86,10 +138,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
       return displayNode;
     });
-  }
-
-  getDropListId(parent: DisplayTreeNode | null): string {
-    return parent ? 'drop-list-' + parent.id : 'drop-list-root';
   }
 
   /**
@@ -274,7 +322,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   addDocument(parent: DisplayTreeNode): void {
     const dialogRef = this.dialog.open(DocumentDialogComponent, {
       data: { parentId: parent.id },
-      width: '95vw',
+      width: '75vw',
       height: '95vh',
       
     });
@@ -303,7 +351,7 @@ openEditDocumentDialog(node: DisplayTreeNode): void {
       tags: node.tags || [],
       parentId: node.parentId
     },
-    width: '95vw',
+    width: '75vw',
     height: '95vh'
   });
   dialogRef.afterClosed().subscribe((updatedData: any | undefined) => {
@@ -314,4 +362,20 @@ openEditDocumentDialog(node: DisplayTreeNode): void {
     }
   });
 }
+
+  /**
+   * Insère le contenu d'un document dans l'éditeur à la position du curseur.
+   */
+  addDocumentToEditor(node: DisplayTreeNode): void {
+    if (node.type !== 'document') return;
+    if (!node.content) {
+      alert("Ce document ne contient aucun texte à insérer.");
+      return;
+    }
+    if (this.editorComponent) {
+      this.editorComponent.insertText(node.content);
+    } else {
+      console.error("L'éditeur n'est pas accessible.");
+    }
+  }
 }

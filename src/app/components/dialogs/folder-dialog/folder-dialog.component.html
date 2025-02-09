@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Ajouter un dossier</h1>
 <div mat-dialog-content>
-  <form [formGroup]="folderForm" style="display: flex; flex-direction: column;">
+  <form [formGroup]="folderForm" (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column;">
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Nom du dossier</mat-label>
       <input matInput formControlName="label" required>

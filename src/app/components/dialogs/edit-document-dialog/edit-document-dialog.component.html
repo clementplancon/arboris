@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Modifier le document</h1>
 <div mat-dialog-content class="dialog-content">
-  <form [formGroup]="editForm" class="document-form">
+  <form [formGroup]="editForm" (ngSubmit)="onSave()" class="document-form">
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Titre</mat-label>
       <input matInput formControlName="title" required>

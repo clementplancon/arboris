@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Ajouter un document</h1>
 <div mat-dialog-content class="dialog-content">
-  <form [formGroup]="documentForm" class="document-form">
+  <form [formGroup]="documentForm" (ngSubmit)="onSubmit()" class="document-form">
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Titre</mat-label>
       <input matInput formControlName="title" required>

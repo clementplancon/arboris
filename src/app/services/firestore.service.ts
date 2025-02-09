@@ -10,8 +10,11 @@ import {
   query,
   orderBy,
   collectionData,
-  getDoc
+  getDoc,
+  docData
 } from '@angular/fire/firestore';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { setDoc } from 'firebase/firestore';
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -31,11 +34,41 @@ export interface TreeNode {
   children?: TreeNode[];
 }
 
+export interface CurrentEditorContent {
+  content: string;
+  updatedAt: any;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
   private firestore = inject(Firestore);
+  private snackbar = inject(MatSnackBar);
+
+  // Méthode de sauvegarde existante
+  async saveEditorContent(content: string): Promise<void> {
+    const editorDocRef = doc(this.firestore, 'editorContent/current');
+    const currentEditorContent: CurrentEditorContent = { content, updatedAt: new Date() };
+    try {
+      await setDoc(editorDocRef, currentEditorContent, { merge: true });
+      this.snackbar.open('Contenu sauvegardé.', 'Fermer', { duration: 2000, data: { type: 'success' } });
+    }
+    catch (error) {
+      this.snackbar.open('Erreur lors de la sauvegarde du contenu.', 'Fermer', { duration: 2000, data: { type: 'error' } });
+    }
+  }
+
+  /**
+   * Récupère le contenu de l'éditeur sauvegardé dans Firestore.
+   * On suppose que le document est stocké dans la collection "editorContent" avec l'ID "current".
+   */
+  getEditorContent(): Observable<string> {
+    const editorDocRef = doc(this.firestore, 'editorContent/current');
+    return (docData(editorDocRef) as Observable<CurrentEditorContent>).pipe(
+      map(data => data && data.content ? data.content : '')
+    );
+  }
 
   /**
    * Ajoute un dossier dans la collection "folders".
