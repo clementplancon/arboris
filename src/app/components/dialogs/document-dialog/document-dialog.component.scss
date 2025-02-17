@@ -24,12 +24,13 @@
     flex-direction: column;
   }
   
+  
   /* La textarea prend toute la hauteur du conteneur flex et son texte est en 11px */
-  .flex-expand textarea[matInput] {
+  textarea[matInput] {
     flex: 1;
     font-family: "Merriweather", serif;
     font-size: 13px;
-    overflow: auto;
     resize: none; /* Facultatif : empêcher le redimensionnement manuel */
+    height: 300px;
   }
   

@@ -10,7 +10,8 @@
   <!-- Contenu principal -->
   <div class="dashboard-main">
     <!-- Colonne de gauche : Arborescence -->
-    <aside class="sidebar-left">
+    <aside class="sidebar-left" [ngClass]="{'left-pane-close': isLeftPaneClosed }">
+      <button mat-icon-button class="left-close-button" (click)="toggleLeftPane()"><mat-icon>{{isLeftPaneClosed ? 'chevron_left' : 'chevron_right' }}</mat-icon></button>
       <button mat-raised-button color="primary" (click)="addFolder(null)">
         <mat-icon [style.color]="'#ffbe7b'">folder</mat-icon><span style="margin-left: 10px;">Ajouter un dossier racine</span></button>
       <!-- Champ de filtre -->
@@ -28,7 +29,8 @@
     </main>
 
     <!-- Colonne de droite : Post-it -->
-    <aside class="sidebar-right">
+    <aside class="sidebar-right" [ngClass]="{'right-pane-close': isRightPaneClosed }">
+      <button mat-icon-button class="right-close-button" (click)="toggleRightPane()"><mat-icon>{{isRightPaneClosed ? 'chevron_left' : 'chevron_right' }}</mat-icon></button>
       <app-post-it></app-post-it>
     </aside>
   </div>
@@ -39,11 +41,15 @@
     <li *ngFor="let node of nodes">
       <div class="node-content">
         <div class="node-label" style="display: flex; align-items: center;">
-          <mat-icon  *ngIf="node.type==='folder'" [style.opacity]="!node.children || node.children.length === 0 ? '0.5' : '1'">{{ node.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-          <mat-icon *ngIf="node.type==='document'" [style.color]="'#65a360'">description</mat-icon>
+          <button *ngIf="node.type==='folder'" mat-icon-button (click)="toggleExpand(node)" matTooltip="Déplier">
+            <mat-icon [style.opacity]="!node.children || node.children.length === 0 ? '0.5' : '1'">{{ node.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </button>
+          <ng-container *ngIf="node.type==='document'">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <mat-icon  [style.color]="'#65a360'">description</mat-icon>
+          </ng-container>
           <span [style.color]="node.color"
           style="margin-left: 5px; cursor: pointer; white-space: nowrap;"
-          (click)="(!node.children || node.children.length === 0) ? null : toggleExpand(node); $event.stopPropagation()"
           (dblclick)="node.type==='folder' ? openEditFolderDialog(node) : openEditDocumentDialog(node); $event.stopPropagation()"
           matTooltip="Déplier / Modifier (double clic)">{{ node.label }}</span>
         </div>

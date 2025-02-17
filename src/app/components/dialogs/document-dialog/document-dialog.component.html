@@ -3,15 +3,15 @@
   <form [formGroup]="documentForm" (ngSubmit)="onSubmit()" class="document-form">
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Titre</mat-label>
-      <input matInput formControlName="title" required>
+      <input matInput formControlName="label" required>
     </mat-form-field>
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Tags (séparés par des virgules)</mat-label>
       <input matInput formControlName="tags">
     </mat-form-field>
-    <mat-form-field appearance="fill" class="full-width flex-expand">
+    <mat-form-field appearance="fill" class="full-width">
       <mat-label>Contenu</mat-label>
-      <textarea matInput formControlName="content" required cdkTextareaAutosize></textarea>
+      <textarea matInput formControlName="content" required></textarea>
     </mat-form-field>
   </form>
 </div>

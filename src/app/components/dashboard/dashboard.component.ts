@@ -17,6 +17,7 @@ import { EditorComponent } from '../editor/editor.component';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { or } from 'firebase/firestore';
 
 export interface DisplayTreeNode extends TreeNode {
   children: DisplayTreeNode[];  // Toujours défini (au moins un tableau vide)
@@ -51,6 +52,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   filterText: string = '';
   private subscription: Subscription = new Subscription();
   private expansionState: { [id: string]: boolean } = {};
+  isRightPaneClosed: boolean = false;
+  isLeftPaneClosed: boolean = false;
 
   // Récupérer la référence à l'éditeur via le template
   @ViewChild('editor') editorComponent!: EditorComponent;
@@ -71,6 +74,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  toggleRightPane(): void {
+    this.isRightPaneClosed = !this.isRightPaneClosed;
+  }
+
+  toggleLeftPane(): void {
+    this.isLeftPaneClosed = !this.isLeftPaneClosed;
+  }
+
   toggleExpand(node: DisplayTreeNode): void {
     node.expanded = !node.expanded;
     // Sauvegarder l'état d'expansion dans notre objet et dans le localStorage
@@ -79,7 +90,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   /**
    * Méthode de filtrage de l'arborescence.
-   * Recherche dans les labels des folders, dans le label (title) des documents et dans leurs tags.
+   * Recherche dans les labels des folders, dans le label des documents et dans leurs tags.
    */
   applyFilter(): void {
     const search = this.filterText.trim().toLowerCase();
@@ -161,6 +172,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     siblings.splice(clampedOrder, 0, node);
     // Mettre à jour l'ordre de chaque sibling
     siblings.forEach((sib, index) => {
+      console.log(sib, index);
       if (sib.order !== index) {
         sib.order = index;
         if (sib.type === 'folder') {
@@ -329,7 +341,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.firestoreService.addDocument({
-          title: result.title,
+          label: result.label,
           content: result.content,
           tags: result.tags,
           parentId: parent.id,
@@ -346,8 +358,9 @@ openEditDocumentDialog(node: DisplayTreeNode): void {
   const dialogRef = this.dialog.open(EditDocumentDialogComponent, {
     data: {
       id: node.id,
-      title: node.label,  // en ajout, on utilise "title" pour le document et on l'affecte au champ label
+      label: node.label, 
       content: node.content,
+      order: node.order || 0,
       tags: node.tags || [],
       parentId: node.parentId
     },
@@ -356,8 +369,17 @@ openEditDocumentDialog(node: DisplayTreeNode): void {
   });
   dialogRef.afterClosed().subscribe((updatedData: any | undefined) => {
     if (updatedData) {
+      const newOrder = Number(updatedData.order);
+      const oldOrder = node.order || 0;
+      console.log('Données mises à jour:', updatedData);
       this.firestoreService.updateDocument(node.id, updatedData)
-        .then(() => console.log(`Document ${node.id} updated successfully`))
+        .then(() => {
+          console.log(`Document ${node.id} updated successfully`);
+          
+          if (newOrder !== oldOrder) {
+            this.updateSiblingOrders(node, newOrder - 1);
+          }
+        })
         .catch(error => console.error(`Error updating document ${node.id}:`, error));
     }
   });

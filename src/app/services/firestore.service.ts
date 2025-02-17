@@ -92,17 +92,16 @@ export class FirestoreService {
   /**
    * Ajoute un document dans la collection "documents".
    * Remarque : Un document peut être ajouté uniquement à l'intérieur d'un dossier.
-   * @param document - Objet contenant title, content, tags, parentId et optionnellement order.
+   * @param document - Objet contenant label, content, tags, parentId et optionnellement order.
    * @returns Une promesse renvoyée par addDoc.
    */
-  async addDocument(document: { title: string; content: string; tags: string[]; parentId: string; order?: number }): Promise<any> {
+  async addDocument(document: { label: string; content: string; tags: string[]; parentId: string; order?: number }): Promise<any> {
     const documentData = {
-      title: document.title,
       content: document.content,
       tags: document.tags,
       type: 'document' as const,
       // On réutilise le champ "label" pour le titre du document.
-      label: document.title,
+      label: document.label,
       createdAt: new Date(),
       ...(document.parentId !== undefined ? { parentId: document.parentId } : {}),
       ...(document.order !== undefined ? { order: document.order } : {})
@@ -126,6 +125,7 @@ export class FirestoreService {
    */
   updateDocument(id: string, data: Partial<TreeNode>): Promise<void> {
     const filteredData = this.filterUndefined(data);
+    console.log('filteredData', filteredData);
     const documentDocRef = doc(this.firestore, `documents/${id}`);
     return updateDoc(documentDocRef, filteredData);
   }

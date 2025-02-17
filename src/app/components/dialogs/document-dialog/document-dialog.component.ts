@@ -26,7 +26,7 @@ export class DocumentDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: { parentId: string }
   ) {
     this.documentForm = this.fb.group({
-      title: ['', Validators.required],
+      label: ['', Validators.required],
       content: ['', Validators.required],
       tags: ['']
     });
